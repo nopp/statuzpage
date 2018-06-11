@@ -6,7 +6,7 @@ https://github.com/nopp/statuzpage-api
 ## Statuzpage-frontend
 https://github.com/nopp/statuzpage-frontend
 
-## Statuz-page-agent
+## Statuzpage-agent
 https://github.com/nopp/statuzpage-agent
 
 Requirements:
