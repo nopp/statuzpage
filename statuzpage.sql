@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `statuzpage` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `statuzpage`;
 -- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
 --
 -- Host: localhost    Database: statuzpage
@@ -46,7 +44,7 @@ CREATE TABLE `sp_incidents` (
   `finishedat` varchar(45) DEFAULT NULL,
   `message` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -59,11 +57,12 @@ DROP TABLE IF EXISTS `sp_urls`;
 CREATE TABLE `sp_urls` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `idGroup` int(11) NOT NULL,
+  `name` varchar(45) NOT NULL,
   `url` varchar(45) NOT NULL,
   `return_code` varchar(45) NOT NULL,
   `content` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -91,4 +90,4 @@ CREATE TABLE `sp_users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-11 10:53:06
+-- Dump completed on 2018-06-11 14:05:04
