@@ -61,6 +61,7 @@ CREATE TABLE `sp_urls` (
   `url` varchar(45) NOT NULL,
   `return_code` varchar(45) NOT NULL,
   `content` varchar(45) DEFAULT NULL,
+  `check_interval` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
