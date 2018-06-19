@@ -1,5 +1,7 @@
 # Statuzpage
 
+Under construction :)
+
 ## Statuzpage-api
 https://github.com/nopp/statuzpage-api
 
@@ -16,6 +18,7 @@ Requirements:
 
 	* Frontend
 	Python3
+	Flask
 
 	* API/Agent
 	go get	github.com/go-sql-driver/mysql
