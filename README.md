@@ -20,6 +20,10 @@ Requirements:
 	Python3
 	Flask
 
-	* API/Agent
-	go get	github.com/go-sql-driver/mysql
-	go get	github.com/gorilla/mux
+	* API
+	github.com/go-sql-driver/mysql
+	github.com/gorilla/mux
+	
+	* Agent
+	github.com/go-sql-driver/mysql
+	github.com/jasonlvhit/gocron	
