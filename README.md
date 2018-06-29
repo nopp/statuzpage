@@ -17,7 +17,7 @@ Requirements:
 	MySQL (statuzpage.sql)
 
 	* Frontend
-	Python3
+	Python2
 	Flask
 
 	* API
