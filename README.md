@@ -1,5 +1,3 @@
-The open source status page system with 90% of code writen in Go lang.
-
 Under construction :)
 
 ## Statuzpage-api
