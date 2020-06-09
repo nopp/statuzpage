@@ -24,8 +24,4 @@ Requirements:
 	
 	* Agent
 	github.com/go-sql-driver/mysql
-	github.com/jasonlvhit/gocron	
-
-Screenshot (under construction yet)
-===================================
-![Image Alt](http://i66.tinypic.com/2h8909h.png)
+	github.com/jasonlvhit/gocron
