@@ -12,20 +12,3 @@ https://github.com/nopp/statuzpage-frontend
 ![Code scanning - action](https://github.com/nopp/statuzpage-agent/workflows/Code%20scanning%20-%20action/badge.svg)
 
 https://github.com/nopp/statuzpage-agent
-
-Requirements:
-=============
-
-	MySQL (statuzpage.sql)
-
-	* Frontend
-	Python2
-	Flask
-
-	* API
-	github.com/go-sql-driver/mysql
-	github.com/gorilla/mux
-	
-	* Agent
-	github.com/go-sql-driver/mysql
-	github.com/jasonlvhit/gocron
