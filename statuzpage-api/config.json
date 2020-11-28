@@ -1,0 +1,8 @@
+{
+    "host":"xxxmysqlhostxxx",
+    "user":"xxxmysqluserxxx",
+    "password":"xxxmysqlpassxxx",
+    "db":"statuzpage",
+    "token":"xxxtokenxxx",
+    "hostport":"0.0.0.0:8000"
+}

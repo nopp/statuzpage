@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: statuzpage-api
+  namespace: default
+data:
+  config.json: |
+      {
+          "host":"mysqlHost",
+          "user":"mysqlUser",
+          "password":"mysqlPassword",
+          "db":"statuzpage",
+          "token":"apiToken",
+          "hostport":"0.0.0.0:8000"
+      }

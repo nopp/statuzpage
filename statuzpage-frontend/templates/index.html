@@ -1,0 +1,88 @@
+{% extends "layout.html" %} 
+{% block body %}
+<div class="container-fluid">
+    <div class="row">
+      <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+        <div class="sidebar-sticky">
+          {% include "menu.html" %}
+        </div>
+      </nav>
+      <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+        <link href="static/dist/timeline.css" rel="stylesheet">
+        {% if totalOpen != "0" %}
+        <div class="alert alert-danger" role="alert">
+            <b>Alguns dos sistemas estão indisponíveis!</b>
+        </div>
+        {% else %}
+        <div class="alert alert-success" role="alert">
+            Todos os sistemas estão operacionais!
+        </div>
+        {% endif %}
+        <div class="container-fluid">
+            <div class="row">
+                {% for group in result %}
+                <div class="col-md-4">
+                <div class="card mb-1">
+                    <div class="card-body">         
+                        {% if group["TotalIncidentsOpen"] != "0" %}
+                            <i class="far fa-circle faNOK"></i> {{ group["Name"] }}
+                        {% else %}
+                            <i class="far fa-circle faOK"></i> {{ group["Name"] }}
+                        {% endif %}
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+            </div>
+            <hr>
+            {% if lastincidents is not none  %}
+            <span class="ultimosIncidentes">Últimos 10 incidentes</span>
+            <ul class="timeline">
+                {% for incident in lastincidents %}
+                <li>
+                    <div class="{{ loop.cycle('direction-l', 'direction-r') }}">
+                        <div class="flag-wrapper">
+                            {% if incident["FinishedAt"]["Valid"] %}
+                            <span class="hexaOK">
+                                <i class="fas fa-check-circle fa-lg"></i>
+                            </span>
+                            {% else %}
+                            <span class="hexaNOK">
+                                <i class="fas fa-exclamation-circle fa-lg"></i>
+                            </span>
+                            {% endif %}
+                            <span class="flag">{{ incident["GroupName"] }}</span>
+                            <span class="time-wrapper">
+                                <span class="time">{{ incident["StartedAt"]|onlydate }}</span>
+                            </span>
+                        </div>
+                        <br><br>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="card-text">
+                                    <h4>{{ incident["UrlName"] }}</h4>
+                                    {{ incident["Message"] }}
+                                </p>
+                                {% if incident["FinishedAt"]["Valid"] %}
+                                <small class="text-muted">
+                                    <b>De</b> {{ incident["StartedAt"]|onlytime }} <b>até</b> {{ incident["FinishedAt"]["String"]|onlytime }} ({{ duration(incident["StartedAt"],incident["FinishedAt"]["String"])}})
+                                </small>
+                                {% else %}
+                                <small class="text-muted">
+                                    <b>Início</b> {{ incident["StartedAt"]|onlytime }}
+                                </small>                                
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+                Sem incidentes cadastrados!
+            {% endif %}
+        </div>
+      </main>
+    </div>
+  </div><br>
+{% endblock %}

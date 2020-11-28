@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: statuzpage-api
+  labels:
+    app: statuzpage-api
+spec:
+  selector:
+    matchLabels:
+      app: statuzpage-api
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: statuzpage-api
+    spec:
+      containers:
+      - image: statuzpage-api:1
+        name: statuzpage-api
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+          name: statuzpage-api
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/statuzpage-api/config.json
+          subPath: config.json
+      volumes:
+        - name: config-volume
+          configMap:
+            name: statuzpage-api

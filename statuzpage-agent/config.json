@@ -1,0 +1,8 @@
+{
+	"statuzpage-api":"localhost:8000",
+	"mysql-host":"localhost",
+	"mysql-user":"statuzpage",
+	"mysql-password":"xxxxx",
+	"mysql-db":"statuzpage",
+	"token":"xxxxxxx"
+}

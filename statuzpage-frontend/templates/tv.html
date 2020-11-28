@@ -1,0 +1,32 @@
+{% extends "layout.html" %} 
+{% block body %}
+<main role="main" class="ml-sm-auto px-4">
+    <link href="static/dist/timeline.css" rel="stylesheet">
+    {% if totalOpen != "0" %}
+    <div class="alert alert-danger" role="alert">
+        <b>Alguns dos sistemas estão indisponíveis!</b>
+    </div>
+    {% else %}
+    <div class="alert alert-success" role="alert">
+        Todos os sistemas estão operacionais!
+    </div>
+    {% endif %}
+    <div class="container-fluid">
+        <div class="row">
+            {% for group in result %}
+            <div class="col-md-2">
+            <div class="card mb-1">
+                <div class="card-body">         
+                    {% if group["TotalIncidentsOpen"] != "0" %}
+                        <i class="far fa-circle faNOK"></i> {{ group["Name"] }}
+                    {% else %}
+                        <i class="far fa-circle faOK"></i> {{ group["Name"] }}
+                    {% endif %}
+                </div>
+            </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+  </main>
+{% endblock %}
