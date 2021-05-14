@@ -1,5 +1,9 @@
 # StatuZpage - Monitoring tool for URLs.
 
+## Features
+* Monitoring by status code
+* Monitoring by status code + content match
+
 ### [StatuZpage Agent](https://github.com/nopp/statuzpage-agent)
 Responsible for monitoring all urls.
 
