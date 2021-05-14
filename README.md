@@ -1,4 +1,4 @@
-# StatuZpage - Monitoring tool for URLs.
+# StatuZpage - Simple monitoring tool for URLs.
 
 ## Features
 * Monitoring by status code.
