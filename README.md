@@ -1,6 +1,4 @@
-## StatuZpage
-
-Monitoring tool for URLs.
+# StatuZpage - Monitoring tool for URLs.
 
 ### [StatuZpage Agent](https://github.com/nopp/statuzpage-agent)
 Responsible for monitoring all urls.
