@@ -1,5 +1,4 @@
 ## Statuzpage components
-![Ui](https://raw.githubusercontent.com/nopp/statuzpage/master/.img/flow.png)
 
 ### [Statuzpage Agent](https://github.com/nopp/statuzpage-agent)
 Responsible for monitoring all urls
