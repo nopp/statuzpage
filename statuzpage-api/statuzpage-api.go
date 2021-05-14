@@ -22,7 +22,6 @@ func main() {
 	// Incident methods
 	router.HandleFunc("/incident", incidents.CreateIncident).Methods("POST")
 	router.HandleFunc("/incident/{id}", incidents.CloseIncident).Methods("POST")
-	// router.HandleFunc("/incident/{id}", incidents.DeleteIncident).Methods("DELETE")
 	router.HandleFunc("/incidents", incidents.GetIncidents).Methods("GET")
 	router.HandleFunc("/incidentsclosed", incidents.GetIncidentsClosed).Methods("GET")
 
