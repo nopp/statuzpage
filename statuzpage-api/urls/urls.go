@@ -6,14 +6,12 @@ import (
 	"log"
 	"net/http"
 	"statuzpage-api/common"
-	"statuzpage-api/groups"
 
 	"github.com/gorilla/mux"
 )
 
 type Url struct {
 	ID            int
-	IDGroup       int
 	Name          string
 	URL           string
 	ReturnCode    string
@@ -35,13 +33,13 @@ func GetUrls(w http.ResponseWriter, r *http.Request) {
 			common.Message(w, "Cant connect to server host!")
 		}
 
-		rows, err := db.Query("SELECT id,idGroup,name,url,return_code,content,check_interval from sp_urls")
+		rows, err := db.Query("SELECT id,name,url,return_code,content,check_interval from sp_urls")
 		if err != nil {
 			common.Message(w, "Cant get urls from systems!")
 		}
 
 		for rows.Next() {
-			err := rows.Scan(&url.ID, &url.IDGroup, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
+			err := rows.Scan(&url.ID, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
 			if err != nil {
 				common.Message(w, "Cant return url informations!")
 			}
@@ -67,7 +65,7 @@ func GetUrl(w http.ResponseWriter, r *http.Request) {
 			common.Message(w, "Cant connect to server host!")
 		}
 
-		err := db.QueryRow("SELECT id,idGroup,name,url,return_code,content,check_interval from sp_urls WHERE id = ?", params["id"]).Scan(&url.ID, &url.IDGroup, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
+		err := db.QueryRow("SELECT id,name,url,return_code,content,check_interval from sp_urls WHERE id = ?", params["id"]).Scan(&url.ID, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
 		if err != nil {
 			common.Message(w, "Cant get url from systems!")
 		}
@@ -93,25 +91,25 @@ func CreateUrl(w http.ResponseWriter, r *http.Request) {
 
 		_ = json.NewDecoder(r.Body).Decode(&url)
 
-		err := db.QueryRow("SELECT COUNT(*) from sp_urls WHERE idGroup = ? and url = ?", url.IDGroup, url.URL).Scan(&total)
+		err := db.QueryRow("SELECT COUNT(*) from sp_urls WHERE url = ?", url.URL).Scan(&total)
 		if err != nil {
 			common.Message(w, "Cant count urls!")
 		}
 
 		if total == 0 {
-			stmt, err := db.Prepare("INSERT INTO sp_urls(idGroup,name,url,return_code,content,check_interval) values(?,?,?,?,?,?)")
+			stmt, err := db.Prepare("INSERT INTO sp_urls(name,url,return_code,content,check_interval) values(?,?,?,?,?)")
 			if err != nil {
 				common.Message(w, "Cant prepare insert url!")
 			}
 
-			_, err = stmt.Exec(url.IDGroup, url.Name, url.URL, url.ReturnCode, url.Content, url.CheckInterval)
+			_, err = stmt.Exec(url.Name, url.URL, url.ReturnCode, url.Content, url.CheckInterval)
 			if err != nil {
 				common.Message(w, "Cant insert url!")
 			} else {
-				common.Message(w, "Url "+url.URL+" added on group "+groups.ReturnGroupName(url.IDGroup))
+				common.Message(w, "Url "+url.URL+" added!")
 			}
 		} else {
-			common.Message(w, "Url already in the group!")
+			common.Message(w, "Url already in the system!")
 		}
 	} else {
 		common.Message(w, "Invalid token!")
@@ -156,7 +154,7 @@ func ReturnURLInfo(IDUrl int) Url {
 		log.Println("Cant connect to server host!")
 	}
 
-	err := db.QueryRow("SELECT id,idGroup,name,url,return_code,content,check_interval FROM sp_urls WHERE id = ?", IDUrl).Scan(&url.ID, &url.IDGroup, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
+	err := db.QueryRow("SELECT id,name,url,return_code,content,check_interval FROM sp_urls WHERE id = ?", IDUrl).Scan(&url.ID, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
 
 	if err != nil {
 		log.Printf("Cant get url info!")

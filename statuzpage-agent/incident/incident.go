@@ -15,24 +15,27 @@ import (
 
 type incident struct {
 	ID         int            `json:"id"`
-	IDGroup    int            `json:"idgroup"`
 	IDUrl      int            `json:"idurl,omitempty"`
 	StartedAt  string         `json:"startedat,omitempty"`
 	FinishedAt sql.NullString `json:"finishedat,omitempty"`
 	Message    string         `json:"message"`
 }
 
+type msg struct {
+	Message string `json:"message"`
+}
+
 // CreateIncident responsible for create a new incident
-func CreateIncident(idGroup, idURL int, message, AppName, GroupName, startedAt string) {
+func CreateIncident(idURL int, message, AppName, startedAt string) {
 
 	var incident incident
+	var msgJson msg
 
 	config := configuration.LoadConfiguration()
 
 	transCfg := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
 	client := &http.Client{Transport: transCfg}
 
-	incident.IDGroup = idGroup
 	incident.IDUrl = idURL
 	incident.StartedAt = startedAt
 	incident.Message = message
@@ -42,7 +45,7 @@ func CreateIncident(idGroup, idURL int, message, AppName, GroupName, startedAt s
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("statuzpage-token", config.Token)
 	if err != nil {
-		log.Println(AppName, "can't create incident!")
+		log.Println(AppName, " can't create incident!")
 	}
 
 	resp, errDO := client.Do(req)
@@ -51,11 +54,12 @@ func CreateIncident(idGroup, idURL int, message, AppName, GroupName, startedAt s
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	log.Println(GroupName + " (" + AppName + ")" + message + " " + string(body))
+	_ = json.Unmarshal(body, &msgJson)
+	log.Println(AppName + " " + message + " " + msgJson.Message)
 }
 
 // CloseIncident responsible for close incident opened
-func CloseIncident(id int, finishedAt, message, AppName, GroupName string) {
+func CloseIncident(id int, finishedAt, AppName string) {
 
 	var incident incident
 
@@ -67,7 +71,6 @@ func CloseIncident(id int, finishedAt, message, AppName, GroupName string) {
 	incident.ID = id
 	incident.FinishedAt.String = finishedAt
 	incident.FinishedAt.Valid = true
-	incident.Message = message
 	incidentJSON, _ := json.Marshal(incident)
 
 	req, err := http.NewRequest("POST", "http://"+config.StatuzpageAPI+"/incident/"+strconv.Itoa(id), bytes.NewBuffer(incidentJSON))
@@ -82,11 +85,11 @@ func CloseIncident(id int, finishedAt, message, AppName, GroupName string) {
 		log.Println(errDO)
 	}
 	defer resp.Body.Close()
-	log.Println(GroupName + " (" + AppName + ") incident closed!")
+	log.Println(AppName + " incident closed!")
 }
 
 // IsOpen verify if incident was opened
-func IsOpen(IDGroup, IDUrl int) bool {
+func IsOpen(IDUrl int) bool {
 
 	var total int
 
@@ -96,7 +99,7 @@ func IsOpen(IDGroup, IDUrl int) bool {
 		log.Println("Cant connect to server host!")
 	}
 
-	err := db.QueryRow("SELECT COUNT(*) from sp_incidents WHERE idGroup = ? AND idUrl = ? AND finishedat IS NULL", IDGroup, IDUrl).Scan(&total)
+	err := db.QueryRow("SELECT COUNT(*) from sp_incidents WHERE idUrl = ? AND finishedat IS NULL", IDUrl).Scan(&total)
 	if err != nil {
 		log.Println("Cant count incidents!")
 	}
@@ -109,7 +112,7 @@ func IsOpen(IDGroup, IDUrl int) bool {
 }
 
 // ReturnIDIncidentOpen return id from opened incidente
-func ReturnIDIncidentOpen(IDGroup, IDUrl int) int {
+func ReturnIDIncidentOpen(IDUrl int) int {
 
 	var id int
 
@@ -119,7 +122,7 @@ func ReturnIDIncidentOpen(IDGroup, IDUrl int) int {
 		log.Println("Cant connect to server host!")
 	}
 
-	err := db.QueryRow("SELECT id from sp_incidents WHERE idGroup = ? AND idUrl = ? AND finishedat IS NULL", IDGroup, IDUrl).Scan(&id)
+	err := db.QueryRow("SELECT id from sp_incidents WHERE idUrl = ? AND finishedat IS NULL", IDUrl).Scan(&id)
 	if err != nil {
 		log.Println("Cant count incidents!")
 	}

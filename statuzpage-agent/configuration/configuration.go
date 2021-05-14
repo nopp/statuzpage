@@ -13,7 +13,6 @@ type config struct {
 	MySQLPass     string `json:"mysql-password"`
 	MySQLDb       string `json:"mysql-db"`
 	Token         string `json:"token"`
-	IDGroup       int    `json:"idgroup"`
 }
 
 // LoadConfiguration from config.json

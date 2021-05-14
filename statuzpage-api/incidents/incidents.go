@@ -6,176 +6,29 @@ import (
 	"net/http"
 	"statuzpage-api/common"
 	"statuzpage-api/urls"
-	"strconv"
 
 	"github.com/gorilla/mux"
 )
 
 type Incident struct {
 	ID         int
-	IDGroup    int
 	IDUrl      int
 	StartedAt  string
 	FinishedAt sql.NullString
-	Message    string
 	GroupName  string
 	UrlName    string
+	Message    string
+}
+
+type IncidentSuport struct {
+	UrlName    string
+	Url        string
+	StartedAt  string
+	FinishedAt sql.NullString
+	Message    string
 }
 
 var incidents []Incident
-
-// Incident
-func GetIncidents(w http.ResponseWriter, r *http.Request) {
-
-	if common.CheckToken(r.Header.Get("statuzpage-token")) {
-
-		var incidents []Incident
-		var incident Incident
-		params := mux.Vars(r)
-
-		db, errDB := common.DBConnection()
-		defer db.Close()
-		if errDB != nil {
-			common.Message(w, "Cant connect to server host!")
-		}
-		if params["limit"] == "0" {
-			rows, err := db.Query("SELECT i.id,i.idGroup,i.idUrl,i.startedat,i.finishedat,i.message,g.name,u.name FROM sp_incidents i, sp_groups g, sp_urls u WHERE i.idGroup = g.id AND i.idUrl = u.id ORDER by i.id DESC")
-			if err != nil {
-				common.Message(w, "Cant get incidents from systems!")
-			}
-
-			for rows.Next() {
-				err := rows.Scan(&incident.ID, &incident.IDGroup, &incident.IDUrl, &incident.StartedAt, &incident.FinishedAt, &incident.Message, &incident.GroupName, &incident.UrlName)
-				if err != nil {
-					common.Message(w, "Cant return incident informations!")
-				}
-				incidents = append(incidents, incident)
-			}
-
-			json.NewEncoder(w).Encode(incidents)
-		} else {
-			rows, err := db.Query("SELECT i.id,i.idGroup,i.idUrl,i.startedat,i.finishedat,i.message,g.name,u.name FROM sp_incidents i, sp_groups g, sp_urls u WHERE i.idGroup = g.id AND i.idUrl = u.id ORDER by i.id DESC LIMIT ?", params["limit"])
-			if err != nil {
-				common.Message(w, "Cant get incidents from systems!")
-			}
-
-			for rows.Next() {
-				err := rows.Scan(&incident.ID, &incident.IDGroup, &incident.IDUrl, &incident.StartedAt, &incident.FinishedAt, &incident.Message, &incident.GroupName, &incident.UrlName)
-				if err != nil {
-					common.Message(w, "Cant return incident informations!")
-				}
-				incidents = append(incidents, incident)
-			}
-
-			json.NewEncoder(w).Encode(incidents)
-		}
-	} else {
-		common.Message(w, "Invalid token!")
-	}
-}
-
-func GetIncidentsByIdGroup(w http.ResponseWriter, r *http.Request) {
-
-	if common.CheckToken(r.Header.Get("statuzpage-token")) {
-
-		var incidents []Incident
-		var incident Incident
-		params := mux.Vars(r)
-
-		db, errDB := common.DBConnection()
-		defer db.Close()
-		if errDB != nil {
-			common.Message(w, "Cant connect to server host!")
-		}
-		if params["limit"] == "0" {
-			rows, err := db.Query("SELECT i.id,i.idGroup,i.idUrl,i.startedat,i.finishedat,i.message,g.name,u.name FROM sp_incidents i, sp_groups g, sp_urls u WHERE i.idGroup = g.id AND i.idUrl = u.id AND i.idGroup = ? ORDER by i.id DESC", params["idgroup"])
-			if err != nil {
-				common.Message(w, "Cant get incidents from systems!")
-			}
-			for rows.Next() {
-				err := rows.Scan(&incident.ID, &incident.IDGroup, &incident.IDUrl, &incident.StartedAt, &incident.FinishedAt, &incident.Message, &incident.GroupName, &incident.UrlName)
-				if err != nil {
-					common.Message(w, "Cant return incident informations!")
-				}
-				incidents = append(incidents, incident)
-			}
-
-			json.NewEncoder(w).Encode(incidents)
-		} else {
-			rows, err := db.Query("SELECT i.id,i.idGroup,i.idUrl,i.startedat,i.finishedat,i.message,g.name,u.name FROM sp_incidents i, sp_groups g, sp_urls u WHERE i.idGroup = g.id AND i.idUrl = u.id AND i.idGroup = ? ORDER by i.id DESC LIMIT ?", params["idgroup"], params["limit"])
-			if err != nil {
-				common.Message(w, "Cant get incidents from systems!")
-			}
-			for rows.Next() {
-				err := rows.Scan(&incident.ID, &incident.IDGroup, &incident.IDUrl, &incident.StartedAt, &incident.FinishedAt, &incident.Message, &incident.GroupName, &incident.UrlName)
-				if err != nil {
-					common.Message(w, "Cant return incident informations!")
-				}
-
-				incidents = append(incidents, incident)
-			}
-
-			json.NewEncoder(w).Encode(incidents)
-		}
-	} else {
-		common.Message(w, "Invalid token!")
-	}
-}
-
-func GetIncidentsByIdGroupMonthYear(w http.ResponseWriter, r *http.Request) {
-
-	if common.CheckToken(r.Header.Get("statuzpage-token")) {
-
-		var incidents []Incident
-		var incident Incident
-		params := mux.Vars(r)
-
-		db, errDB := common.DBConnection()
-		defer db.Close()
-		if errDB != nil {
-			common.Message(w, "Cant connect to server host!")
-		}
-		rows, err := db.Query("SELECT i.id,i.idGroup,i.idUrl,i.startedat,i.finishedat,i.message,g.name,u.name FROM sp_incidents i, sp_groups g, sp_urls u WHERE i.idGroup = g.id AND i.idUrl = u.id AND i.idGroup = ? AND MONTH(i.startedat) = ? AND YEAR(i.startedat) = ? ORDER by i.id DESC", params["idgroup"], params["month"], params["year"])
-		if err != nil {
-			common.Message(w, "Cant get incidents from systemsX!")
-		}
-		for rows.Next() {
-			err := rows.Scan(&incident.ID, &incident.IDGroup, &incident.IDUrl, &incident.StartedAt, &incident.FinishedAt, &incident.Message, &incident.GroupName, &incident.UrlName)
-			if err != nil {
-				common.Message(w, "Cant return incident informations!")
-			}
-			incidents = append(incidents, incident)
-		}
-
-		json.NewEncoder(w).Encode(incidents)
-	} else {
-		common.Message(w, "Invalid token!")
-	}
-}
-
-func GetIncident(w http.ResponseWriter, r *http.Request) {
-
-	if common.CheckToken(r.Header.Get("statuzpage-token")) {
-
-		params := mux.Vars(r)
-		var incident Incident
-
-		db, errDB := common.DBConnection()
-		defer db.Close()
-		if errDB != nil {
-			common.Message(w, "Cant connect to server host!")
-		}
-
-		err := db.QueryRow("SELECT id,idGroup,idUrl,startedat,finishedat,message from sp_incidents WHERE id = ?", params["id"]).Scan(&incident.ID, &incident.IDGroup, &incident.IDUrl, &incident.StartedAt, &incident.FinishedAt, &incident.Message)
-		if err != nil {
-			common.Message(w, "Cant get incident from systems!")
-		}
-
-		json.NewEncoder(w).Encode(incident)
-	} else {
-		common.Message(w, "Invalid token!")
-	}
-}
 
 func CreateIncident(w http.ResponseWriter, r *http.Request) {
 
@@ -194,17 +47,17 @@ func CreateIncident(w http.ResponseWriter, r *http.Request) {
 
 		urlInfo := urls.ReturnURLInfo(incident.IDUrl)
 
-		err := db.QueryRow("SELECT COUNT(*) from sp_incidents WHERE idGroup = ? AND idUrl = ? AND finishedat IS NULL", incident.IDGroup, incident.IDUrl).Scan(&total)
+		err := db.QueryRow("SELECT COUNT(*) from sp_incidents WHERE idUrl = ? AND finishedat IS NULL", incident.IDUrl).Scan(&total)
 		if err != nil {
 			common.Message(w, "Cant count incidents!")
 		}
 
 		if total == 0 {
-			stmt, err := db.Prepare("INSERT INTO sp_incidents(idGroup,idUrl,startedat,message) values(?,?,?,?)")
+			stmt, err := db.Prepare("INSERT INTO sp_incidents(idUrl,startedat,message) values(?,?,?)")
 			if err != nil {
 				common.Message(w, "Cant prepare insert incident!")
 			}
-			res, err := stmt.Exec(int(incident.IDGroup), incident.IDUrl, incident.StartedAt, incident.Message)
+			res, err := stmt.Exec(incident.IDUrl, incident.StartedAt, incident.Message)
 			if err != nil {
 				common.Message(w, urlInfo.Name+" cant insert incident!")
 			} else {
@@ -247,11 +100,11 @@ func CloseIncident(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if total != 0 {
-			stmt, err := db.Prepare("UPDATE sp_incidents SET finishedat = ?, message = ? WHERE id = ?")
+			stmt, err := db.Prepare("UPDATE sp_incidents SET finishedat = ? WHERE id = ?")
 			if err != nil {
 				common.Message(w, "Cant prepare update incident!")
 			}
-			res, err := stmt.Exec(incident.FinishedAt.String, incident.Message, params["id"])
+			res, err := stmt.Exec(incident.FinishedAt.String, params["id"])
 			if err != nil {
 				common.Message(w, "Cant update incident!")
 			}
@@ -270,51 +123,63 @@ func CloseIncident(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteIncident(w http.ResponseWriter, r *http.Request) {
+func GetIncidents(w http.ResponseWriter, r *http.Request) {
 
 	if common.CheckToken(r.Header.Get("statuzpage-token")) {
 
-		params := mux.Vars(r)
+		var incidents []IncidentSuport
+		var incident IncidentSuport
 
 		db, errDB := common.DBConnection()
 		defer db.Close()
 		if errDB != nil {
 			common.Message(w, "Cant connect to server host!")
 		}
-
-		stmt, err := db.Prepare("DELETE FROM sp_incidents WHERE id = ?")
+		rows, err := db.Query("SELECT url.name,url.url,inci.startedat,inci.message FROM sp_urls url JOIN sp_incidents inci on inci.idUrl = url.id AND inci.finishedat is NULL")
 		if err != nil {
-			common.Message(w, "Cant prepare delete incidents!")
+			common.Message(w, "Cant get incidents from systems!")
 		}
 
-		_, err = stmt.Exec(params["id"])
-		if err != nil {
-			common.Message(w, "Cant delete incident!")
+		for rows.Next() {
+			err := rows.Scan(&incident.UrlName, &incident.Url, &incident.StartedAt, &incident.Message)
+			if err != nil {
+				common.Message(w, "Cant return incident informations!")
+			}
+			incidents = append(incidents, incident)
 		}
 
-		common.Message(w, "Incident "+params["id"]+" deleted!")
+		json.NewEncoder(w).Encode(incidents)
 	} else {
 		common.Message(w, "Invalid token!")
 	}
 }
 
-func GetTotalIncidentsOpen(w http.ResponseWriter, r *http.Request) {
+func GetIncidentsClosed(w http.ResponseWriter, r *http.Request) {
 
 	if common.CheckToken(r.Header.Get("statuzpage-token")) {
 
-		var total int
+		var incidents []IncidentSuport
+		var incident IncidentSuport
 
 		db, errDB := common.DBConnection()
 		defer db.Close()
 		if errDB != nil {
 			common.Message(w, "Cant connect to server host!")
 		}
-
-		err := db.QueryRow("SELECT count(*) FROM sp_incidents i, sp_groups g WHERE i.idGroup = g.id AND i.finishedat IS NULL").Scan(&total)
+		rows, err := db.Query("SELECT i.startedat,i.finishedat,i.message,u.name from sp_incidents i, sp_urls u WHERE i.idUrl = u.id AND i.finishedat IS NOT NULL ORDER by i.finishedat DESC")
 		if err != nil {
-			common.Message(w, "Cant count open incidents !")
+			common.Message(w, "Cant get incidents closed from systems!")
 		}
-		common.Message(w, strconv.Itoa(total))
+
+		for rows.Next() {
+			err := rows.Scan(&incident.StartedAt, &incident.FinishedAt, &incident.Message, &incident.UrlName)
+			if err != nil {
+				common.Message(w, "Cant return incidents closed informations!")
+			}
+			incidents = append(incidents, incident)
+		}
+
+		json.NewEncoder(w).Encode(incidents)
 	} else {
 		common.Message(w, "Invalid token!")
 	}

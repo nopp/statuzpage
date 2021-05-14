@@ -28,7 +28,7 @@ func ReturnURLInfo(IDUrl int) Info {
 		log.Println("Cant connect to server host!")
 	}
 
-	err := db.QueryRow("SELECT id,idGroup,name,url,return_code,content,check_interval FROM sp_urls WHERE id = ?", IDUrl).Scan(&url.ID, &url.IDGroup, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
+	err := db.QueryRow("SELECT id,name,url,return_code,content,check_interval FROM sp_urls WHERE id = ?", IDUrl).Scan(&url.ID, &url.Name, &url.URL, &url.ReturnCode, &url.Content, &url.CheckInterval)
 
 	if err != nil {
 		log.Printf("Cant get url info!")
@@ -37,8 +37,8 @@ func ReturnURLInfo(IDUrl int) Info {
 	return url
 }
 
-// ReturnUrlsByIDGroup Return url from ID Group
-func ReturnUrlsByIDGroup(IDGroup int) (*sql.Rows, error) {
+// ReturnUrls Return url from ID Group
+func ReturnUrls() (*sql.Rows, error) {
 
 	db, errDB := db.DBConnection()
 	defer db.Close()
@@ -46,7 +46,7 @@ func ReturnUrlsByIDGroup(IDGroup int) (*sql.Rows, error) {
 		log.Println("Cant connect to server host!")
 	}
 
-	result, err := db.Query("SELECT id,name,url,return_code,content,check_interval FROM sp_urls WHERE idGroup = ?", IDGroup)
+	result, err := db.Query("SELECT id,name,url,return_code,content,check_interval FROM sp_urls")
 
 	return result, err
 }
